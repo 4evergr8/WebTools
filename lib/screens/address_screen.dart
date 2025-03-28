@@ -21,6 +21,7 @@ class _AddressScreenState extends State<AddressScreen> {
   void initState() {
     super.initState();
     _getCurrentIp();
+    _timeController.text = '50'; // 设置时间输入框的默认值为 50
   }
 
   // 获取当前设备的内网地址
@@ -110,9 +111,9 @@ class _AddressScreenState extends State<AddressScreen> {
                 // 获取输入框的内容
                 String start = _startController.text;
                 String end = _endController.text;
-                int time = int.tryParse(_timeController.text) ?? 100;
+                int time = int.tryParse(_timeController.text) ?? 50; // 默认值为 50
                 // 调用扫描函数
-                scan(start, end, time);
+                address(start, end, time);
               },
               icon: Icon(Icons.search), // 使用搜索图标
               label: Text('扫描'),
@@ -122,5 +123,4 @@ class _AddressScreenState extends State<AddressScreen> {
       ),
     );
   }
-
 }
