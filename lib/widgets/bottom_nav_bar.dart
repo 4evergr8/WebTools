@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import '/screens/dns_screen.dart';
 import '/screens/address_screen.dart';
 import '/screens/port_screen.dart';
@@ -30,6 +29,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    // 获取当前主题
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -56,7 +58,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: theme.colorScheme.secondary, // 使用主题中的颜色
+        unselectedItemColor: theme.colorScheme.onSurface, // 使用主题中的未选中颜色
+        backgroundColor: theme.colorScheme.background, // 使用主题中的背景颜色
         onTap: _onItemTapped,
       ),
     );
