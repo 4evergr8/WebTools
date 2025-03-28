@@ -18,7 +18,7 @@ Future<void> port(
       // 尝试连接到指定端口
       await Socket.connect(target, port, timeout: Duration(milliseconds: timeoutMs));
       print('端口 $port: 连接成功');
-    } on SocketException catch (e) {
+    } on SocketException {
       // 如果连接失败，打印失败信息
       print('端口 $port: 连接失败');
     } catch (e) {
