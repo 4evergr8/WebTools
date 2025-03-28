@@ -9,11 +9,11 @@ Future<List<String>> processDirectory(String targetFolderName) async {
     final appDir = await getApplicationDocumentsDirectory();
     final targetPath = '${appDir.path}/$targetFolderName';
 
-    // 检查目标目录是否存在
+    // 检查目标目录是否存在，如果不存在则创建
     final targetDir = Directory(targetPath);
     if (!await targetDir.exists()) {
-      print('Target directory does not exist: $targetPath');
-      return validFolders;
+      print('Target directory does not exist, creating: $targetPath');
+      await targetDir.create(recursive: true);
     }
 
     // 获取目标目录下的所有文件和文件夹
