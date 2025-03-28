@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '/screens/dns_screen.dart';
-import '/screens/address_screen.dart';
-import '/screens/port_screen.dart';
-import '/screens/python_screen.dart';
 import '/screens/history_screen.dart';
+import '/widgets/internet_page.dart';
+import '/widgets/intranet_page.dart';
+import '/service/share_handler.dart'; // 引用处理分享的逻辑
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -16,10 +15,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    DNSScreen(),
-    AddressScreen(),
-    PortScreen(),
-    PythonScreen(),
+    InternetPage(),
+    IntranetPage(),
     HistoryScreen(),
   ];
 
@@ -27,6 +24,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 初始化分享内容的接收
+    ShareHandlerService().initPlatformState(context);
   }
 
   @override
@@ -39,24 +43,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.cloud),
+            label: '外网功能',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.network_check),
-            label: 'DNS',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
-            label: '地址',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_ethernet),
-            label: '端口',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.code),
-            label: 'Python插件',
+            label: '内网功能',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
-            label: '历史',
+            label: '历史记录',
           ),
         ],
         currentIndex: _selectedIndex,
