@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import '/service/file_extractor.dart'; // 导入解压逻辑文件
-
-
+import '/service/scan_plugin.dart'; // 导入目录处理逻辑文件
 
 class PythonScreen extends StatefulWidget {
   const PythonScreen({super.key});
@@ -13,8 +12,23 @@ class PythonScreen extends StatefulWidget {
 }
 
 class _PythonScreenState extends State<PythonScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 在页面加载时调用 processDirectory 函数
+    _processDirectory();
+  }
 
-
+  Future<void> _processDirectory() async {
+    try {
+      final targetFolderName = 'plugin'; // 目标文件夹名称
+      final validFolders = await processDirectory(targetFolderName);
+      // 可以在这里处理 validFolders，例如显示在屏幕上
+      print('Valid folders: $validFolders');
+    } catch (e) {
+      print('Failed to process directory: $e');
+    }
+  }
 
   Future<void> _pickAndExtractFile() async {
     try {
