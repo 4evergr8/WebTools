@@ -38,6 +38,7 @@ dependencies:
   google_fonts: any
   network_info_plus: any
   http: any
+  path_provider: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
