@@ -3,6 +3,8 @@ import '/service/doh.dart';
 import '/service/dot.dart';
 
 class DNSScreen extends StatefulWidget {
+  const DNSScreen({super.key});
+
   @override
   _DNSScreenState createState() => _DNSScreenState();
 }
@@ -10,7 +12,7 @@ class DNSScreen extends StatefulWidget {
 class _DNSScreenState extends State<DNSScreen> {
   bool _isDoh = true; // 默认为 DoH
   String _queryUrl = 'https://dns.alidns.com/dns-query'; // 默认 DoH 地址
-  String _queryPort = ':853'; // 默认 DoT 端口
+  final String _queryPort = ':853'; // 默认 DoT 端口
   String _domain = 'baidu.com'; // 默认查询域名
   int _timeout = 5000; // 默认超时时长（毫秒）
 
