@@ -1,72 +1,63 @@
-import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:math';
+import 'dart:io';
 
 Future<String> dotQuery(String queryUrl, String domain, int timeoutMs) async {
-  try {
-    // 解析 DoT 服务器地址
-    final server = Uri.parse(queryUrl);
-    final socket = await SecureSocket.connect(
-      server.host,
-      server.port ?? 853, // 默认端口为 853
-      onBadCertificate: (cert) => true, // 忽略证书验证（仅用于测试）
-    ).timeout(Duration(milliseconds: timeoutMs));
-
-    // 构造 DNS 查询报文（查询类型为 ANY）
-    final queryId = _generateRandomId(); // 随机生成查询 ID
-    final query = _buildDnsQuery(queryId, domain, type: 'ANY');
-
-    // 发送查询
-    socket.add(query);
-
-    // 接收响应
-    final response = await socket.first.timeout(Duration(milliseconds: timeoutMs));
-    final result = utf8.decode(response);
-
-    socket.close();
-    return '请求成功。响应内容: $result';
-  } catch (e) {
-    return '请求失败。错误信息: $e';
-  }
-}
-
-// 生成随机查询 ID（2 字节）
-int _generateRandomId() {
-  final random = Random();
-  return random.nextInt(65536); // 0 到 65535
-}
-
+try {
 // 构造 DNS 查询报文
-Uint8List _buildDnsQuery(int queryId, String domain, {String type = 'ANY'}) {
-  final transactionId = queryId.toRadixString(16).padLeft(4, '0');
-  final flags = '0100'; // 标准查询
-  final questions = '0001'; // 一个问题
-  final answerRRs = '0000'; // 无回答
-  final authorityRRs = '0000'; // 无权威记录
-  final additionalRRs = '0000'; // 无附加记录
+final id = 0x1234; // 随机ID
+final flags = 0x0100; // 标准查询
+final questions = 1; // 一个问题
+final answerRRs = 0; // 无回答
+final authorityRRs = 0; // 无权威记录
+final additionalRRs = 0; // 无额外记录
 
-  // 构造域名部分
-  final domainParts = domain.split('.');
-  final domainBytes = '${domainParts.map((part) {
-    final length = part.length.toRadixString(16).padLeft(2, '0');
-    final name = part.codeUnits.map((unit) => unit.toRadixString(16).padLeft(2, '0')).join();
-    return '$length$name';
-  }).join()}00'; // 添加域名结束标志
+// 构造域名部分
+List<int> domainBytes = [];
+for (var part in domain.split('.')) {
+domainBytes.add(part.length);
+domainBytes.addAll(utf8.encode(part));
+}
+domainBytes.add(0); // 结尾
 
-  // 查询类型：ANY
-  final typeHex = '00ff';
-  // 查询类别：IN
-  final classType = '0001';
+// 构造问题部分
+final questionType = 1; // A记录
+final questionClass = 1; // IN
+domainBytes.addAll([questionType >> 8, questionType & 0xFF]);
+domainBytes.addAll([questionClass >> 8, questionClass & 0xFF]);
 
-  // 构造完整的查询报文
-  final queryHex = '$transactionId$flags$questions$answerRRs$authorityRRs$additionalRRs$domainBytes$typeHex$classType';
+// 构造报文头
+final header = [
+id >> 8, id & 0xFF,
+flags >> 8, flags & 0xFF,
+questions >> 8, questions & 0xFF,
+answerRRs >> 8, answerRRs & 0xFF,
+authorityRRs >> 8, authorityRRs & 0xFF,
+additionalRRs >> 8, additionalRRs & 0xFF,
+];
 
-  // 将十六进制字符串转换为字节数组
-  final queryBytes = Uint8List(queryHex.length ~/ 2);
-  for (int i = 0; i < queryHex.length; i += 2) {
-    queryBytes[i ~/ 2] = int.parse(queryHex.substring(i, i + 2), radix: 16);
-  }
+// 合并报文
+final dnsQueryBytes = Uint8List.fromList(header + domainBytes);
 
-  return queryBytes;
+// 添加请求长度
+final length = dnsQueryBytes.length;
+final requestBytes = Uint8List(length + 2);
+requestBytes[0] = (length >> 8) & 0xFF;
+requestBytes[1] = length & 0xFF;
+requestBytes.setRange(2, length + 2, dnsQueryBytes);
+
+// 发送请求
+final socket = await SecureSocket.connect(queryUrl, 853, timeout: Duration(milliseconds: timeoutMs));
+socket.write(requestBytes);
+
+// 接收响应
+final responseBytes = await socket.first.timeout(Duration(milliseconds: timeoutMs));
+
+// 解析响应内容
+final responseText = utf8.decode(responseBytes);
+return '请求成功。响应内容:\n$responseText';
+} catch (e) {
+// 捕获所有异常，返回错误信息
+return '请求失败。错误信息: $e';
+}
 }
