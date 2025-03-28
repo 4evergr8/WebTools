@@ -6,6 +6,8 @@ import '/screens/python_screen.dart';
 import '/screens/history_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
+
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
@@ -13,7 +15,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     DNSScreen(),
     AddressScreen(),
     PortScreen(),
@@ -60,7 +62,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         currentIndex: _selectedIndex,
         selectedItemColor: theme.colorScheme.secondary, // 使用主题中的颜色
         unselectedItemColor: theme.colorScheme.onSurface, // 使用主题中的未选中颜色
-        backgroundColor: theme.colorScheme.background, // 使用主题中的背景颜色
+        backgroundColor: theme.colorScheme.surface, // 使用主题中的背景颜色
         onTap: _onItemTapped,
       ),
     );
