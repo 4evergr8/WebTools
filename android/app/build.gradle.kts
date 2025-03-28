@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.web_tools"
+        applicationId = "a.forevergreat.webtools"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -34,10 +34,24 @@ android {
         abi {
             isEnable = true
             reset()
+            include("arm64-v8a")
+            isUniversalApk = false
+        }
+    }
+
+/*
+    splits {
+        abi {
+            isEnable = true
+            reset()
             include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
             isUniversalApk = true
         }
     }
+这是一个多行注释。
+可以跨越多行。
+*/
+
 
 
     buildTypes {
