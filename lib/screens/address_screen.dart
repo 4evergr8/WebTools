@@ -1,23 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import '/service/scan_address.dart';
 
 class AddressScreen extends StatefulWidget {
+  const AddressScreen({super.key});
+
   @override
   _AddressScreenState createState() => _AddressScreenState();
 }
 
 class _AddressScreenState extends State<AddressScreen> {
   // 控制器，用于获取输入框的值
-  TextEditingController _startController = TextEditingController();
-  TextEditingController _endController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
+  final TextEditingController _startController = TextEditingController();
+  final TextEditingController _endController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+
+  String _currentIp = 'Unknown'; // 当前设备的内网地址
 
   @override
   void initState() {
     super.initState();
-    // 假设设备当前所在子网的地址是192.168.123.111
-    _startController.text = '192.168.123.1'; // 起始地址
-    _endController.text = '192.168.123.255'; // 结束地址
-    _timeController.text = '100'; // 默认值100
+    _getCurrentIp();
+  }
+
+  // 获取当前设备的内网地址
+  Future<void> _getCurrentIp() async {
+    final NetworkInfo networkInfo = NetworkInfo();
+    try {
+      String? wifiIP = await networkInfo.getWifiIP();
+      setState(() {
+        _currentIp = wifiIP ?? 'Unknown';
+        if (_currentIp != 'Unknown') {
+          // 根据当前设备的内网地址计算起始地址和结束地址
+          _startController.text = _calculateStartIp(_currentIp);
+          _endController.text = _calculateEndIp(_currentIp);
+        }
+      });
+    } catch (e) {
+      print('Failed to get current IP address: $e');
+    }
+  }
+
+  // 根据当前设备的内网地址计算起始地址
+  String _calculateStartIp(String currentIp) {
+    List<String> parts = currentIp.split('.');
+    parts[3] = '1';
+    return parts.join('.');
+  }
+
+  // 根据当前设备的内网地址计算结束地址
+  String _calculateEndIp(String currentIp) {
+    List<String> parts = currentIp.split('.');
+    parts[3] = '255';
+    return parts.join('.');
   }
 
   @override
@@ -33,6 +68,11 @@ class _AddressScreenState extends State<AddressScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // 显示当前设备的内网地址
+            Text(
+              '当前设备内网地址: $_currentIp',
+              style: theme.textTheme.bodyLarge,
+            ),
             // 起始地址输入框
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -70,9 +110,9 @@ class _AddressScreenState extends State<AddressScreen> {
                 // 获取输入框的内容
                 String start = _startController.text;
                 String end = _endController.text;
-                String time = _timeController.text;
+                int time = int.tryParse(_timeController.text) ?? 100;
                 // 调用扫描函数
-                _scan(start, end, time);
+                scan(start, end, time);
               },
               icon: Icon(Icons.search), // 使用搜索图标
               label: Text('扫描'),
@@ -83,11 +123,4 @@ class _AddressScreenState extends State<AddressScreen> {
     );
   }
 
-  // 扫描函数
-  void _scan(String start, String end, String time) {
-    // 在这里实现扫描逻辑
-    print('起始地址：$start');
-    print('结束地址：$end');
-    print('时间：$time ms');
-  }
 }
