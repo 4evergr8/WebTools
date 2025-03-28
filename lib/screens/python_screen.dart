@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PythonScreen extends StatelessWidget {
+  const PythonScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
