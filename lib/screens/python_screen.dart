@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'dart:io';
+import '/service/file_extractor.dart'; // 导入解压逻辑文件
+
+
 
 class PythonScreen extends StatefulWidget {
   const PythonScreen({super.key});
@@ -10,34 +13,31 @@ class PythonScreen extends StatefulWidget {
 }
 
 class _PythonScreenState extends State<PythonScreen> {
-  final String _fileName = 'aaa.txt';
-  final String _folderName = 'aaa';
 
-  Future<void> _createFileInAppDirectory() async {
+
+  Future<void> _pickAndExtractFile() async {
     try {
-      // 获取应用的文档目录
-      final appDir = await getApplicationDocumentsDirectory();
-      final folderPath = '${appDir.path}/$_folderName';
-
-      // 创建文件夹
-      final folder = Directory(folderPath);
-      if (!await folder.exists()) {
-        await folder.create(recursive: true);
-      }
-
-      // 创建文件
-      final filePath = '$folderPath/$_fileName';
-      final file = File(filePath);
-      await file.writeAsString('Hello, this is a test file.');
-
-      // 显示成功消息
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('File created successfully at $filePath')),
+      // 使用 file_picker 选择文件
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
       );
+
+      if (result != null) {
+        final file = File(result.files.single.path!);
+        final targetFolderName = 'plugin'; // 目标文件夹名称
+
+        // 调用解压函数
+        await extractFile(file, targetFolderName);
+
+        // 显示成功消息
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('File extracted successfully')),
+        );
+      }
     } catch (e) {
       // 显示错误消息
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create file: $e')),
+        SnackBar(content: Text('Failed to extract file: $e')),
       );
     }
   }
@@ -52,19 +52,14 @@ class _PythonScreenState extends State<PythonScreen> {
         backgroundColor: theme.colorScheme.inversePrimary,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Python插件 Screen',
-              style: theme.textTheme.bodyLarge,
-            ),
-            ElevatedButton(
-              onPressed: _createFileInAppDirectory,
-              child: Text('创建文件'),
-            ),
-          ],
+        child: Text(
+          'Python插件 Screen',
+          style: theme.textTheme.bodyLarge,
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _pickAndExtractFile,
+        child: Icon(Icons.add),
       ),
     );
   }
