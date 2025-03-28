@@ -48,11 +48,11 @@ Uint8List _buildDnsQuery(int queryId, String domain, {String type = 'ANY'}) {
 
   // 构造域名部分
   final domainParts = domain.split('.');
-  final domainBytes = domainParts.map((part) {
+  final domainBytes = '${domainParts.map((part) {
     final length = part.length.toRadixString(16).padLeft(2, '0');
     final name = part.codeUnits.map((unit) => unit.toRadixString(16).padLeft(2, '0')).join();
     return '$length$name';
-  }).join() + '00'; // 添加域名结束标志
+  }).join()}00'; // 添加域名结束标志
 
   // 查询类型：ANY
   final typeHex = '00ff';
