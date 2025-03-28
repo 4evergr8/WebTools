@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "a.4evergr8.webtools"
+    namespace = "a.forevergreat.webtools"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
