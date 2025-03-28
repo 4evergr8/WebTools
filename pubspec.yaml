@@ -38,10 +38,10 @@ dependencies:
   google_fonts: any
   network_info_plus: any
   http: any
+  share_handler: ^0.0.22
+  url_launcher: any
 
   path_provider: ^2.0.11
-  file_picker: ^5.2.1
-  archive: ^3.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
