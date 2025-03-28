@@ -13,7 +13,7 @@ String intToIp(int ip) {
 }
 
 // 扫描函数
-Future<void> scan(String startAddress, String endAddress, int timeoutMs) async {
+Future<void> address(String startAddress, String endAddress, int timeoutMs) async {
   // 解析起始和结束 IP 地址
   int startIp = ipToInt(startAddress);
   int endIp = ipToInt(endAddress);
