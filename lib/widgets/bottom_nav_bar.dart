@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import '/screens/dns_screen.dart';
 import '/screens/address_screen.dart';
 import '/screens/port_screen.dart';
@@ -6,8 +7,6 @@ import '/screens/python_screen.dart';
 import '/screens/history_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
-
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
@@ -15,7 +14,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = <Widget>[
     DNSScreen(),
     AddressScreen(),
     PortScreen(),
