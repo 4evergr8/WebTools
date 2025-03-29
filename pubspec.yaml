@@ -40,6 +40,7 @@ dependencies:
   http: any
   share_handler: ^0.0.22
   url_launcher: any
+  flutter_launcher_icons: any
 
   path_provider: ^2.0.11
 dev_dependencies:
